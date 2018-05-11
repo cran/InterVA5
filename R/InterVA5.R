@@ -15,7 +15,7 @@
 #' the input to the correct order.
 #'
 #' @param Input A matrix input, or data read from csv files in the same format
-#' as required by InterVA5. Sample input is included as data(SampleInputV5).
+#' as required by InterVA5. Sample input is included as data(RandomVA5).
 #' @param HIV An indicator of the level of prevalence of HIV. The input should
 #' be one of the following: "h"(high),"l"(low), or "v"(very low).
 #' @param Malaria An indicator of the level of prevalence of Malaria. The input
@@ -52,22 +52,29 @@
 #' @seealso \code{\link{InterVA5.plot}}
 #' @references http://www.interva.net/
 #' @keywords InterVA
+#' @export InterVA5
 #' @examples
 #'
-#' data(SampleInputV5)
+#' data(RandomVA5)
+#' # only fit first 5 observations for a quick illustration
+#' RandomVA5 <- RandomVA5[1:5, ]
+#' 
 #' ## to get easy-to-read version of causes of death make sure the column
 #' ## orders match interVA5 standard input this can be monitored by checking
 #' ## the warnings of column names
 #'
-#' sample.output1 <- InterVA5(SampleInputV5, HIV = "h", Malaria = "l", write=TRUE, 
+#' sample.output1 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", write=FALSE, 
 #'     directory = tempdir(), filename = "VA5_result", output = "extended", append = FALSE)
 #'
+#' \dontrun{
 #' ## to get causes of death with group code for further usage
-#' sample.output2 <- InterVA5(SampleInputV5, HIV = "h", Malaria = "l", 
-#'     write = TRUE, directory = tempdir(), filename = "VA5_result_wt_code", output = "classic", 
+#' sample.output2 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", 
+#'     write = FALSE, directory = tempdir(), filename = "VA5_result_wt_code", output = "classic", 
 #'     append = FALSE, groupcode = TRUE)
+#'}
+#' 
 #'
-InterVA5 <- function (Input, HIV, Malaria, write = FALSE, directory = NULL, filename = "VA5_result", 
+InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filename = "VA5_result", 
                       output = "classic", append = FALSE, groupcode = FALSE,
                       ...) 
 {
@@ -137,12 +144,12 @@ InterVA5 <- function (Input, HIV, Malaria, write = FALSE, directory = NULL, file
     if (S != dim(probbaseV5)[1]) {
         stop("error: invalid data input format. Number of values incorrect")
     }
-    if (tolower(colnames(Input)[S]) != "w610459o") {
-        stop("error: the last variable should be 'w610459o -- q costs'")
+    if (tolower(colnames(Input)[S]) != "i459o") {
+        stop("error: the last variable should be 'i459o'")
     }
-    data("SampleInputV5", envir = environment())
-    SampleInputV5 <- get("SampleInputV5", envir = environment())
-    valabels = colnames(SampleInputV5)
+    data("RandomVA5", envir = environment())
+    RandomVA5 <- get("RandomVA5", envir = environment())
+    valabels = colnames(RandomVA5)
     count.changelabel = 0
     for (i in 1:S) {
         if (tolower(colnames(Input)[i]) != tolower(valabels)[i]) {
@@ -252,125 +259,12 @@ InterVA5 <- function (Input, HIV, Malaria, write = FALSE, directory = NULL, file
             }
             next
         }
-        
-        for (k in 1:2) {
-            for (j in 2:S) {
-                
-                subst.val <- NA
-                subst.val[probbaseV5[j,6]=="N"] <- 0
-                subst.val[probbaseV5[j,6]=="Y"] <- 1
 
-                cols.dont.asks <- (8:15)[substr(probbaseV5[j, 8:15],1,5)!=""]
-                if(length(cols.dont.asks)>0){
-                    for(q in cols.dont.asks){
-                    
-                        Dont.ask  <- substr(probbaseV5[j,q], 1, 5)
-                        Dont.ask.who <- probbaseV5[match(toupper(Dont.ask), toupper(probbaseV5[,1])),4]
-                        
-                        Dont.ask.row <- match(toupper(Dont.ask), toupper(probbaseV5[,1]))
-                        input.Dont.ask <- input.current[Dont.ask.row]
-                        
-                        Dont.ask.val.tmp <- substr(probbaseV5[j,q], 6, 6)
-                        Dont.ask.val     <- NA
-                        Dont.ask.val[Dont.ask.val.tmp=="N"] <- 0
-                        Dont.ask.val[Dont.ask.val.tmp=="Y"] <- 1
-                        
-                        if(!is.na(input.current[j]) & !is.na(input.Dont.ask)){
-                            if(input.current[j]==subst.val & input.Dont.ask==Dont.ask.val){
-                                input.current[j] <- NA
-                                if (write) {
-                                    if(k==1){
-                                        firstPass <- rbind(firstPass,
-                                                           paste(index.current, "   ", probbaseV5[j, 4], " (",
-                                                                 probbaseV5[j, 3], ") value inconsistent with ",
-                                                                 Dont.ask.who, " (", probbaseV5[Dont.ask.row, 3],
-                                                                 ") - cleared in working information", sep="")
-                                                           )
-                                    }
-                                    if(k==2){
-                                        secondPass <- rbind(secondPass,
-                                                            paste(index.current, "   ", probbaseV5[j, 4], " (",
-                                                                  probbaseV5[j, 3], ") value inconsistent with ",
-                                                                  Dont.ask.who, " (", probbaseV5[Dont.ask.row, 3],
-                                                                  ") - cleared in working information", sep="")
-                                                            )
-                                    }
+        tmp <- DataCheck5(input.current, id=index.current, probbaseV5=probbaseV5, write=write)
+        input.current <- tmp$Output
+        firstPass <- rbind(firstPass, tmp$firstPass)
+        secondPass <- rbind(secondPass, tmp$secondPass)
 
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                if(substr(probbaseV5[j, 16], 1, 5)!="" & !is.na(input.current[j])){
-                    Ask.if    <- substr(probbaseV5[j,16], 1, 5)
-                    Ask.if.who <- probbaseV5[match(toupper(Ask.if), toupper(probbaseV5[,1])),4]
-
-                    Ask.if.row <- match(toupper(Ask.if), toupper(probbaseV5[,1]))
-                    input.Ask.if <- input.current[Ask.if.row]
-                    
-                    Ask.if.val.tmp <- substr(probbaseV5[j, 16], 6, 6)
-                    Ask.if.val <- NA
-                    Ask.if.val[Ask.if.val.tmp=="N"] <- 0
-                    Ask.if.val[Ask.if.val.tmp=="Y"] <- 1
-                    
-                    if(input.current[j]==subst.val){
-
-                        changeAskIf <- input.Ask.if!=Ask.if.val
-                        if(is.na(changeAskIf)) changeAskIf <- TRUE
-                        if(changeAskIf){
-                            
-                            input.current[Ask.if.row] <- Ask.if.val
-                            
-                            if (write) {
-                                if(k==1){
-                                    firstPass <- rbind(firstPass,
-                                                       paste(index.current, "   ", probbaseV5[j, 4], " (", probbaseV5[j, 3],
-                                                             ")  not flagged in category ", probbaseV5[Ask.if.row, 4], " (",
-                                                             probbaseV5[Ask.if.row, 3], ") - updated in working information", sep="")
-                                                       )
-                                }
-                                if(k==2){
-                                    secondPass <- rbind(secondPass,
-                                                        paste(index.current, "   ", probbaseV5[j, 4], " (", probbaseV5[j, 3],
-                                                             ")  not flagged in category ", probbaseV5[Ask.if.row, 4], " (",
-                                                              probbaseV5[Ask.if.row, 3], ") - updated in working information", sep="")
-                                                        )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if(substr(probbaseV5[j, 17], 1, 5)!="" & !is.na(input.current[j])){
-                    
-                    NN.only <- substr(probbaseV5[j, 17], 1, 5)
-                    
-                    NN.only.row   <- match(toupper(NN.only), toupper(probbaseV5[,1]))
-                    input.NN.only <- input.current[NN.only.row]
-                    input.NN.only <- ifelse(is.na(input.NN.only), 0, input.NN.only)
-
-                    if(input.current[j]==subst.val & input.NN.only!=1){ 
-                        input.current[j] <- NA
-                        if (write) {
-                            if(k==1){
-                                firstPass <- rbind(firstPass,
-                                                   paste(index.current, "   ", probbaseV5[j, 4], " (", probbaseV5[j, 3],
-                                                         ") only required for neonates - cleared in working information", sep="")
-                                                   )
-                            }
-                            if(k==2){
-                                secondPass <- rbind(secondPass,
-                                                    paste(index.current, "   ", probbaseV5[j, 4], " (", probbaseV5[j, 3],
-                                                          ") only required for neonates - cleared in working information", sep="")
-                                                    )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
         subst.vector <- rep(NA, length=S)
         subst.vector[probbaseV5[,6]=="N"] <- 0
         subst.vector[probbaseV5[,6]=="Y"] <- 1

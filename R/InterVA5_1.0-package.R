@@ -43,12 +43,6 @@ NULL
 #' Maintainer: Jason Thomas <jarathomas@@gmail.com>
 #' @references http://www.interva.net/
 #' @keywords InterVA
-#' @examples
-#'
-#' data(SampleInputV5)
-#' sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", 
-#'     write = TRUE, directory = tempdir(), filename = "VA5_result", 
-#'     output = "extended", append = FALSE)
 #'
 NULL
 
@@ -70,26 +64,26 @@ NULL
 #' (rows 2 - 354) are the conditional probabilities.
 #' @keywords datasets
 #' @examples
-#'
+#' 
 #' data(probbaseV5)
 #'
 NULL
 
-#' 3 records of Sample Input
+#' 200 records of Sample Input
 #'
-#' This is a dataset consisting of 3 arbitrary sample input deaths in the
+#' This is a dataset consisting of 200 arbitrary sample input deaths in the
 #' acceptable format of InterVA5. Any dataset that needs to be analyzed by this
 #' package should be in the same format. The order of the input fields must
 #' not be changed.
 #'
 #'
-#' @name SampleInputV5
+#' @name RandomVA5
 #' @docType data
-#' @format 3 arbitrary input records.
+#' @format 200 arbitrary input records.
 #' @keywords datasets
 #' @examples
 #'
-#' data(SampleInputV5)
+#' data(RandomVA5)
 #'
 NULL
 

@@ -11,20 +11,28 @@
 #' @param ... not used
 #' @references http://www.interva.net/
 #' @keywords InterVA
+#' @importFrom grDevices grey.colors 
+#' @importFrom graphics barplot par pie 
+#' @importFrom utils data write.table
+#' @export
 #' @examples
-#'
-#' data(SampleInputV5)
+#' \dontrun{
+#' data(RandomVA5)
+#' # only fit first 20 observations for a quick illustration
+#' RandomVA5 <- RandomVA5[1:20, ]
+#' 
 #' ## to get easy-to-read version of causes of death make sure the column
 #' ## orders match interVA5 standard input this can be monitored by checking
 #' ## the warnings of column names
 #'
-#' sample.output1 <- InterVA5(SampleInputV5, HIV = "h", Malaria = "l", 
-#'     write = TRUE, directory = tempdir(), filename = "VA5_result", 
+#' sample.output1 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", 
+#'     write = FALSE, directory = tempdir(), filename = "VA5_result", 
 #'     output = "extended", append = FALSE)
 #'
 #' summary(sample.output1)
 #' summary(sample.output1, top = 10)
 #' summary(sample.output1, id = "sample3")
+#' }
 summary.interVA5 <- function(object, top = 5, id = NULL, InterVA.rule = TRUE, ...){
 
     if(is.null(object$dev)){
@@ -117,6 +125,7 @@ summary.interVA5 <- function(object, top = 5, id = NULL, InterVA.rule = TRUE, ..
 #'
 #' @param x summary of InterVA5 results
 #' @param ... not used
+#' @export
 #' @keywords InterVA
 print.interVA5_summary <- function(x, ...){
     # print single death summary

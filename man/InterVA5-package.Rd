@@ -18,14 +18,6 @@ versions, please check the github repository at:
 \tabular{ll}{ Package: \tab InterVA5\cr Type: \tab Package\cr Version: \tab
 1.0\cr Date: \tab 2018-02-01\cr License: \tab GPL-3\cr }
 }
-\examples{
-
-data(SampleInputV5)
-sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", 
-    write = TRUE, directory = tempdir(), filename = "VA5_result", 
-    output = "extended", append = FALSE)
-
-}
 \references{
 http://www.interva.net/
 }

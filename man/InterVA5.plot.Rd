@@ -26,8 +26,11 @@ for it.
 }
 \examples{
 
-data(SampleInputV5)
-sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", write = TRUE, 
+\dontrun{
+data(RandomVA5)
+# only fit first 20 observations for a quick illustration
+RandomVA5 <- RandomVA5[1:20, ]
+#' sample.output <- InterVA5(RandomVA5, HIV = "h", Malaria = "v", write = FALSE, 
     directory = tempdir(), filename = "VA5_result", output = "extended", append = FALSE)
 
 ## Individual level summary using pie chart
@@ -39,6 +42,7 @@ InterVA5.plot(sample.output$VA5[[3]], type = "pie", min.prob = 0.01,
 ## Individual level summary using bar chart
 InterVA5.plot(sample.output$VA5[[3]], type = "bar", min.prob = 0.01,
     main = "2nd sample VA analysis using bar chart", cex.main = 0.8)
+}
 
 }
 \seealso{

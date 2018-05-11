@@ -8,14 +8,19 @@
 #' @author Jason Thomas, Zehang LI, Tyler McCormick, Sam Clark
 #' @keywords interVA
 #' @seealso \code{\link{CSMF5}}
+#' @export CSMF.interVA5
 #' @examples
 #'
-#' data(SampleInputV5)
-#' sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", write=TRUE,
+#' \dontrun{
+#' data(RandomVA5)
+#' # only fit first 20 observations for a quick illustration
+#' RandomVA5 <- RandomVA5[1:20, ]
+#' 
+#' sample.output <- InterVA5(RandomVA5, HIV = "h", Malaria = "v", write=TRUE,
 #'        directory = tempdir(), filename = "VA5_result", output = "extended", append = FALSE)
 #' ## Get CSMF without plots
 #' csmf <- CSMF.interVA5(sample.output$VA5)
-#' 
+#' }
 #'
 CSMF.interVA5 <- function(va){
    # for future compatibility with non-standard input
@@ -102,14 +107,20 @@ CSMF.interVA5 <- function(va){
 #' @author Jason Thomas, Zehang LI, Tyler McCormick, Sam Clark
 #' @keywords interVA
 #' @seealso \code{\link{CSMF5}}
+#' @export COMCAT.interVA5
 #' @examples
 #'
-#' data(SampleInputV5)
-#' sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", 
+#' \dontrun{
+#' data(RandomVA5)
+#' # only fit first 20 observations for a quick illustration
+#' RandomVA5 <- RandomVA5[1:20, ]
+#' 
+#' sample.output <- InterVA5(RandomVA5, HIV = "h", Malaria = "v", 
 #'        write=TRUE, directory = tempdir(),
 #'        filename = "VA5_result", output = "extended", append = FALSE)
 #' ## Get CSMF without plots
 #' comcat <- COMCAT.interVA5(sample.output$VA5)
+#' }
 #'
 COMCAT.interVA5 <- function(va){
    # for future compatibility with non-standard input
@@ -184,10 +195,15 @@ COMCAT.interVA5 <- function(va){
 #' @author Jason Thomas, Zehang LI, Tyler McCormick, Sam Clark
 #' @seealso \code{\link{CSMF.interVA5}}
 #' @keywords interVA
+#' @export CSMF5
 #' @examples
 #'
-#' data(SampleInputV5)
-#' sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", write = TRUE, 
+#' \dontrun{
+#' data(RandomVA5)
+#' # only fit first 20 observations for a quick illustration
+#' RandomVA5 <- RandomVA5[1:20, ]
+#' 
+#' sample.output <- InterVA5(RandomVA5, HIV = "h", Malaria = "v", write = FALSE, 
 #'        directory = tempdir(), filename = "VA5_result", output = "extended", 
 #'        append = FALSE)
 #'
@@ -211,6 +227,7 @@ COMCAT.interVA5 <- function(va){
 #' CSMF.summary4 <- CSMF5(sample.output, type = "bar",
 #'   top.plot = 5, main = "Top 5 population COD distribution",
 #'   cex.main = 1)
+#' }
 #'
 CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALSE, type="bar",  top.plot = 10, min.prob = 0, ... ) {
 
@@ -345,10 +362,14 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
 #' main title, size and font of labels, and the radius of the pie chart.
 #' @seealso \code{\link{CSMF5}}
 #' @keywords InterVA
+#' @export InterVA5.plot
 #' @examples
 #'
-#' data(SampleInputV5)
-#' sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", write = TRUE, 
+#' \dontrun{
+#' data(RandomVA5)
+#' # only fit first 20 observations for a quick illustration
+#' RandomVA5 <- RandomVA5[1:20, ]
+#' #' sample.output <- InterVA5(RandomVA5, HIV = "h", Malaria = "v", write = FALSE, 
 #'     directory = tempdir(), filename = "VA5_result", output = "extended", append = FALSE)
 #'
 #' ## Individual level summary using pie chart
@@ -360,6 +381,7 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
 #' ## Individual level summary using bar chart
 #' InterVA5.plot(sample.output$VA5[[3]], type = "bar", min.prob = 0.01,
 #'     main = "2nd sample VA analysis using bar chart", cex.main = 0.8)
+#' }
 #'
 InterVA5.plot <- function(va, type="bar", min.prob = 0.01, ... ){
 

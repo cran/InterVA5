@@ -4,13 +4,13 @@
 \alias{InterVA5}
 \title{Provide InterVA5 analysis on the data input.}
 \usage{
-InterVA5(Input, HIV, Malaria, write = FALSE, directory = NULL,
+InterVA5(Input, HIV, Malaria, write = TRUE, directory = NULL,
   filename = "VA5_result", output = "classic", append = FALSE,
   groupcode = FALSE, ...)
 }
 \arguments{
 \item{Input}{A matrix input, or data read from csv files in the same format
-as required by InterVA5. Sample input is included as data(SampleInputV5).}
+as required by InterVA5. Sample input is included as data(RandomVA5).}
 
 \item{HIV}{An indicator of the level of prevalence of HIV. The input should
 be one of the following: "h"(high),"l"(low), or "v"(very low).}
@@ -73,18 +73,24 @@ the input to the correct order.
 }
 \examples{
 
-data(SampleInputV5)
+data(RandomVA5)
+# only fit first 5 observations for a quick illustration
+RandomVA5 <- RandomVA5[1:5, ]
+
 ## to get easy-to-read version of causes of death make sure the column
 ## orders match interVA5 standard input this can be monitored by checking
 ## the warnings of column names
 
-sample.output1 <- InterVA5(SampleInputV5, HIV = "h", Malaria = "l", write=TRUE, 
+sample.output1 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", write=FALSE, 
     directory = tempdir(), filename = "VA5_result", output = "extended", append = FALSE)
 
+\dontrun{
 ## to get causes of death with group code for further usage
-sample.output2 <- InterVA5(SampleInputV5, HIV = "h", Malaria = "l", 
-    write = TRUE, directory = tempdir(), filename = "VA5_result_wt_code", output = "classic", 
+sample.output2 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", 
+    write = FALSE, directory = tempdir(), filename = "VA5_result_wt_code", output = "classic", 
     append = FALSE, groupcode = TRUE)
+}
+
 
 }
 \references{

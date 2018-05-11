@@ -44,8 +44,12 @@ for the population distribution.
 }
 \examples{
 
-data(SampleInputV5)
-sample.output <- InterVA5(SampleInputV5, HIV = "h", Malaria = "v", write = TRUE, 
+\dontrun{
+data(RandomVA5)
+# only fit first 20 observations for a quick illustration
+RandomVA5 <- RandomVA5[1:20, ]
+
+sample.output <- InterVA5(RandomVA5, HIV = "h", Malaria = "v", write = FALSE, 
        directory = tempdir(), filename = "VA5_result", output = "extended", 
        append = FALSE)
 
@@ -68,6 +72,7 @@ CSMF.summary3 <- CSMF5(sample.output, type = "bar",
 CSMF.summary4 <- CSMF5(sample.output, type = "bar",
   top.plot = 5, main = "Top 5 population COD distribution",
   cex.main = 1)
+}
 
 }
 \seealso{
