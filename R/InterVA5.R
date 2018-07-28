@@ -135,6 +135,12 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
             file = "errorlogV5.txt", append = FALSE)
     }
 
+
+  if( "i183o" %in% colnames(Input)){
+    colnames(Input)[which(colnames(Input) == "i183o")] <- "i183a"
+    message("Due to the inconsistent names in the early version of InterVA5, the indicator 'i183o' has been renamed as 'i183a'.")
+  }
+
     Input <- as.matrix(Input)
     if (dim(Input)[1] < 1) {
         stop("error: no data input")

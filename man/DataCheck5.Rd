@@ -4,7 +4,7 @@
 \alias{DataCheck5}
 \title{Data cleaning for InterVA-5 algorithm}
 \usage{
-DataCheck5(Input, id, probbaseV5, write)
+DataCheck5(Input, id, probbaseV5, InSilico_check = FALSE, write)
 }
 \arguments{
 \item{Input}{original data vector for one observation coded by 0 (absense), 1 (presence), and NA (missing).}
@@ -12,6 +12,8 @@ DataCheck5(Input, id, probbaseV5, write)
 \item{id}{id for this observation}
 
 \item{probbaseV5}{matrix of probbaseV5}
+
+\item{InSilico_check}{logical indicator for if the check uses InSilicoVA rule. InSilicoVA rule sets all symptoms that should not be asked to missing. In contrast, the default InterVA5 rule sets these symptoms to missing only when they take the substantive value.}
 
 \item{write}{logical indicator of writing to file}
 }

@@ -5,6 +5,7 @@
 #' @param Input original data vector for one observation coded by 0 (absense), 1 (presence), and NA (missing).
 #' @param id id for this observation
 #' @param probbaseV5 matrix of probbaseV5
+#' @param InSilico_check logical indicator for if the check uses InSilicoVA rule. InSilicoVA rule sets all symptoms that should not be asked to missing. In contrast, the default InterVA5 rule sets these symptoms to missing only when they take the substantive value. 
 #' @param write logical indicator of writing to file
 #' 
 #' @return  \item{Output }{ new data vector} \item{firstPass
@@ -29,7 +30,7 @@
 #'
 #' 
 
-DataCheck5 <- function(Input, id, probbaseV5, write){
+DataCheck5 <- function(Input, id, probbaseV5, InSilico_check=FALSE, write){
 		
 		input.current <- Input
 		S <- length(input.current)
@@ -60,7 +61,7 @@ DataCheck5 <- function(Input, id, probbaseV5, write){
                         Dont.ask.val[Dont.ask.val.tmp=="Y"] <- 1
                         
                         if(!is.na(input.current[j]) & !is.na(input.Dont.ask)){
-                            if(input.current[j]==subst.val & input.Dont.ask==Dont.ask.val){
+                            if( (input.current[j]==subst.val || InSilico_check)  & input.Dont.ask==Dont.ask.val){
                                 input.current[j] <- NA
                                 if (write) {
                                     if(k==1){
