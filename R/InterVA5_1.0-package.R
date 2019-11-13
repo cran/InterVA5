@@ -50,7 +50,7 @@ NULL
 
 
 
-#' Conditional probability of InterVA5
+#' Conditional probability of InterVA5 (version 17 -- Sept. 9th, 2018)
 #'
 #' This is the table of conditional probabilities of symptoms given CODs, along with
 #' prior probabilities in the first row. The
@@ -69,6 +69,56 @@ NULL
 #'
 NULL
 
+
+
+
+
+#' Version 14 of the conditional probability of InterVA5
+#'
+#' This is version 14 (February 15th, 2018) of the table of conditional probabilities of symptoms given CODs, along with
+#' prior probabilities in the first row. The
+#' values are from InterVA-5
+#'
+#'
+#' @name probbaseV5_14
+#' @docType data
+#' @format A data frame with 354 observations on 87 variables. The first row contains
+#' observations corresponding to prior probabilities; while the subsequent observations
+#' (rows 2 - 354) are the conditional probabilities.
+#' @keywords datasets
+#' @examples
+#' 
+#' data(probbaseV5_14)
+#'
+NULL
+
+
+
+
+
+#' Version 17 of the conditional probability of InterVA5
+#'
+#' This is version 17 (Sept. 9th, 2018) of the table of conditional probabilities of symptoms given CODs, along with
+#' prior probabilities in the first row. The
+#' values are from InterVA-5
+#'
+#'
+#' @name probbaseV5_17
+#' @docType data
+#' @format A data frame with 354 observations on 87 variables. The first row contains
+#' observations corresponding to prior probabilities; while the subsequent observations
+#' (rows 2 - 354) are the conditional probabilities.
+#' @keywords datasets
+#' @examples
+#' 
+#' data(probbaseV5_17)
+#'
+NULL
+
+
+
+
+
 #' 200 records of Sample Input
 #'
 #' This is a dataset consisting of 200 arbitrary sample input deaths in the
@@ -86,6 +136,3 @@ NULL
 #' data(RandomVA5)
 #'
 NULL
-
-
-

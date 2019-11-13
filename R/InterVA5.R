@@ -30,12 +30,16 @@
 #' @param filename The filename the user wish to save the output. No extension
 #' needed. The output is in .csv format by default.
 #' @param output "classic": The same deliminated output format as InterVA5; or
-#' "extended": deliminated output followed by full distribution of cause of
+#' "extended": delimited output followed by full distribution of cause of
 #' death proability.
 #' @param append A logical value indicating whether or not the new output
 #' should be appended to the existing file.
 #' @param groupcode A logical value indicating whether or not the group code
 #' will be included in the output causes.
+#' @param sci A data frame that contains the symptom-cause-information (aka
+#' Probbase) that InterVA uses to assign a cause of death.
+#' @param returnCheckedData A logical indicating if the checked data (i.e.,
+#' the data that have been modified by the consistency checks) should be returned.
 #' @param ... not used
 #' @return \item{ID }{ identifier from batch (input) file} \item{MALPREV
 #' }{ selected malaria prevalence} \item{HIVPREV }{ selected HIV prevalence}
@@ -44,11 +48,12 @@
 #' }{ indeterminate outcome} \item{CAUSE1 }{ most likely cause} \item{LIK1 }{
 #' likelihood of 1st cause} \item{CAUSE2 }{ second likely cause} \item{LIK2 }{
 #' likelihood of 2nd cause} \item{CAUSE3 }{ third likely cause} \item{LIK3 }{
-#' likelihood of 3rd cause} \item{wholeprob}{ full distribution of causes of death}
+#' likelihood of 3rd cause}
 #' \item{COMCAT }{ most likely circumstance of mortality}
 #' \item{COMNUM }{ likelihood of COMCAT}
 #' \item{wholeprob }{ full distribution of causes of death}
-#' @author Jason Thomas Zehang Li, Tyler McCormick, Sam Clark
+#'
+#' @author Jason Thomas, Zehang Li, Tyler McCormick, Sam Clark
 #' @seealso \code{\link{InterVA5.plot}}
 #' @references http://www.interva.net/
 #' @keywords InterVA
@@ -63,20 +68,20 @@
 #' ## orders match interVA5 standard input this can be monitored by checking
 #' ## the warnings of column names
 #'
-#' sample.output1 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", write=FALSE, 
+#' sample.output1 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", write = FALSE, 
 #'     directory = tempdir(), filename = "VA5_result", output = "extended", append = FALSE)
 #'
 #' \dontrun{
 #' ## to get causes of death with group code for further usage
 #' sample.output2 <- InterVA5(RandomVA5, HIV = "h", Malaria = "l", 
-#'     write = FALSE, directory = tempdir(), filename = "VA5_result_wt_code", output = "classic", 
+#'     write = FALSE, directory = "VA test", filename = "VA5_result_wt_code", output = "classic", 
 #'     append = FALSE, groupcode = TRUE)
 #'}
 #' 
 #'
 InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filename = "VA5_result", 
-                      output = "classic", append = FALSE, groupcode = FALSE,
-                      ...) 
+                      output = "classic", append = FALSE, groupcode = FALSE, sci = NULL,
+                      returnCheckedData = FALSE, ...) 
 {
     va5 <- function(ID, MALPREV, HIVPREV, PREGSTAT, PREGLIK, CAUSE1, LIK1, CAUSE2, LIK2, CAUSE3, LIK3, INDET,
                     COMCAT, COMNUM, wholeprob, ...) {
@@ -90,7 +95,7 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         wholeprob <- wholeprob
         va5.out <- list(ID = ID, MALPREV = MALPREV, HIVPREV = HIVPREV, PREGSTAT = PREGSTAT, PREGLIK = PREGLIK, 
                         CAUSE1 = CAUSE1, LIK1 = LIK1, CAUSE2 = CAUSE2, LIK2 = LIK2, CAUSE3 = CAUSE3, LIK3 = LIK3, INDET = INDET,
-                        COMCAT=COMCAT, COMNUM=COMNUM, wholeprob = wholeprob)
+                        COMCAT = COMCAT, COMNUM = COMNUM, wholeprob = wholeprob)
         va5.out
     }
     save.va5 <- function(x, filename, write) {
@@ -113,15 +118,31 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         write.table(t(x), file = filename, sep = ",", append = TRUE, row.names = FALSE, col.names = FALSE)
     }
     if (is.null(directory) & write)
-        stop("error: please provide a directory (required when write=TRUE)")
+        stop("error: please provide a directory (required when write = TRUE)")
     if (is.null(directory)) 
         directory = getwd()
     dir.create(directory, showWarnings = FALSE)
     globle.dir <- getwd()
     setwd(directory)
-    data("probbaseV5", envir = environment())
-    probbaseV5 <- get("probbaseV5", envir = environment())
-    probbaseV5 <- as.matrix(probbaseV5)
+
+    if (is.null(sci)) {
+        data("probbaseV5", envir = environment())
+        probbaseV5 <- get("probbaseV5", envir = environment())
+        probbaseV5 <- as.matrix(probbaseV5)
+        probbaseV5Version <- probbaseV5[1,3]
+    }
+    if (!is.null(sci)) {
+        validSCI <- TRUE
+        if (!is.data.frame(sci) & !is.matrix(sci)) validSCI <- FALSE
+        if (nrow(sci) != 354) validSCI <- FALSE
+        if (ncol(sci) != 87) validSCI <- FALSE
+        if (!validSCI) {
+            stop("error: invalid sci (must be data frame or matrix with 354 rows and 87 columns).")
+        }
+        probbaseV5 <- as.matrix(sci)
+        probbaseV5Version <- probbaseV5[1,3]
+    }
+    message("Using Probbase version:  ", probbaseV5Version)
     data("causetextV5", envir = environment())
     causetextV5 <- get("causetextV5", envir = environment())
     if (groupcode) {
@@ -134,9 +155,7 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         cat(paste("Error & warning log built for InterVA5", Sys.time(), "\n"),
             file = "errorlogV5.txt", append = FALSE)
     }
-
-
-  if( "i183o" %in% colnames(Input)){
+  if ( "i183o" %in% colnames(Input)) {
     colnames(Input)[which(colnames(Input) == "i183o")] <- "i183a"
     message("Due to the inconsistent names in the early version of InterVA5, the indicator 'i183o' has been renamed as 'i183a'.")
   }
@@ -232,12 +251,19 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
     firstPass  <- NULL
     secondPass <- NULL
     errors <- NULL
+    if (returnCheckedData) {
+        checkedData <- NULL
+        idInputs <- Input[,1]
+    }
     for (i in 1:N) {
         if (i%%nd == 0) {
             cat(".")
         }
         if (i%%np == 0) {
             cat(paste(round(i/N * 100), "% completed\n", sep = ""))
+        }
+        if (i == N) {
+            cat(paste("100% completed\n", sep = ""))
         }
 
         index.current <- as.character(Input[i, 1])   
@@ -267,6 +293,10 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         }
 
         tmp <- DataCheck5(input.current, id=index.current, probbaseV5=probbaseV5, write=write)
+        if (returnCheckedData) {
+            checkedData <- rbind(checkedData,
+                                 c(idInputs[i], tmp[2:S]))
+        }
         input.current <- tmp$Output
         firstPass <- rbind(firstPass, tmp$firstPass)
         secondPass <- rbind(secondPass, tmp$secondPass)
@@ -276,9 +306,9 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         subst.vector[probbaseV5[,6]=="Y"] <- 1
 
         new.input <- rep(0, S)
-        for(y in 2:S){
-            if(!is.na(input.current[y])){
-                if(input.current[y]==subst.vector[y]){
+        for (y in 2:S) {
+            if (!is.na(input.current[y])) {
+                if (input.current[y]==subst.vector[y]) {
                     new.input[y] <- 1
                 }
             }
@@ -287,7 +317,6 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         input.current[input.current==0] <- 1
         input.current[1] <- 0
         input.current[is.na(input.current)] <- 0
-
         reproductiveAge <- 0
         preg_state      <- " "
         lik.preg        <- " "
@@ -324,15 +353,15 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         }
         if (which.max(prob_A) == 1 && prob_A[1] >= 0.1 && reproductiveAge == 1) {
             preg_state <- "Not pregnant or recently delivered"
-            lik.preg <- round(prob_A[1]/sum(prob_A) * 100)
+            lik.preg <- as.numeric(round(prob_A[1]/sum(prob_A) * 100))
         }
         if (which.max(prob_A) == 2 && prob_A[2] >= 0.1 && reproductiveAge == 1) {
             preg_state <- "Pregnancy ended within 6 weeks of death"
-            lik.preg <- round(prob_A[2]/sum(prob_A) * 100)
+            lik.preg <- as.numeric(round(prob_A[2]/sum(prob_A) * 100))
         }
         if (which.max(prob_A) == 3 && prob_A[3] >= 0.1 && reproductiveAge == 1) {
             preg_state <- "Pregnant at death"
-            lik.preg <- round(prob_A[3]/sum(prob_A) * 100)
+            lik.preg <- as.numeric(round(prob_A[3]/sum(prob_A) * 100))
         }
 
         ## Determine the output of InterVA
@@ -359,12 +388,12 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         }
 
         ## Determine the Circumstance Of Mortality CATegory (COMCAT) and probability
-        if(sum(prob_C) > 0) prob_C <- prob_C/sum(prob_C)
-        if(max(prob_C)<.5){
+        if (sum(prob_C) > 0) prob_C <- prob_C/sum(prob_C)
+        if (max(prob_C)<.5) {
             comcat <- "Multiple"
             comnum <- " "
         }
-        if(max(prob_C)>=.5){
+        if (max(prob_C)>=.5) {
             comcat <- names(prob_C)[which.max(prob_C)]
             comnum <- round(max(prob_C)*100)
         }
@@ -385,8 +414,9 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
     }
 
     setwd(globle.dir)
+    if (!returnCheckedData) checkedData <- "returnCheckedData = FALSE"
     out <- list(ID = ID.list[which(!is.na(ID.list))], VA5 = VAresult[which(!is.na(ID.list))], 
-                Malaria = Malaria, HIV = HIV)
+                Malaria = Malaria, HIV = HIV, checkedData = checkedData)
     class(out) <- "interVA5"
     return(out)
 }

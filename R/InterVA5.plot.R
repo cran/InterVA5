@@ -22,10 +22,10 @@
 #' csmf <- CSMF.interVA5(sample.output$VA5)
 #' }
 #'
-CSMF.interVA5 <- function(va){
+CSMF.interVA5 <- function(va) {
    # for future compatibility with non-standard input
-    for(i in 1:length(va)){
-        if(!is.null(va[[i]]$wholeprob)){
+    for (i in 1:length(va)) {
+        if (!is.null(va[[i]]$wholeprob)) {
             causenames <- names(va[[i]]$wholeprob)
             causeindex <- 1:length(causenames)
             break
@@ -34,30 +34,29 @@ CSMF.interVA5 <- function(va){
 
     include.probAC <- FALSE
     # fix for removing the first 3 preg related death in standard input
-    if(causenames[ 1] == "Not pregnant or recently delivered" &&
-       causenames[ 2] == "Pregnancy ended within 6 weeks of death" &&
-       causenames[ 3] == "Pregnant at death"&&
-       causenames[65] == "Culture" &&
-       causenames[66] == "Emergency" &&
-       causenames[67] == "Health systems" &&
-       causenames[68] == "Inevitable" &&
-       causenames[69] == "Knowledge" &&
-       causenames[70] == "Resources"){
-            causeindex <- causeindex[-c(1:3, 65:70)]
-            causenames <- causenames[-c(1:3, 65:70)]
-            include.probAC <- TRUE
+    if (causenames[ 1] == "Not pregnant or recently delivered" &&
+        causenames[ 2] == "Pregnancy ended within 6 weeks of death" &&
+        causenames[ 3] == "Pregnant at death"&&
+        causenames[65] == "Culture" &&
+        causenames[66] == "Emergency" &&
+        causenames[67] == "Health systems" &&
+        causenames[68] == "Inevitable" &&
+        causenames[69] == "Knowledge" &&
+        causenames[70] == "Resources") {
+          causeindex <- causeindex[-c(1:3, 65:70)]
+          causenames <- causenames[-c(1:3, 65:70)]
+          include.probAC <- TRUE
     }
 
-
     ## Check if there is a valid va object
-    if(length(va) < 1){
+    if (length(va) < 1) {
         cat("No va object found")
         return()
     }
     ## Initialize the population distribution
     dist <- NULL
-    for(i in 1:length(va)){
-        if(!is.null(va[[i]][15])){
+    for (i in 1:length(va)) {
+        if (!is.null(va[[i]][15])) {
             dist <- rep(0, length(unlist(va[[i]][15])))
             break
         }
@@ -65,13 +64,14 @@ CSMF.interVA5 <- function(va){
     undeter <- 0
 
     ## pick not simply the top 3 causes, but the top 3 causes reported by InterVA5
-    for(i in 1:length(va)){
-        if(is.null(va[[i]][15])) next
+    for (i in 1:length(va)) {
+        if (is.null(va[[i]][15])) next
         this.dist <- unlist(va[[i]][15])
-        if(include.probAC) this.dist[c(1:3, 65:70)] <- 0
-        if(max(this.dist) < 0.4){
-          undeter <- undeter + sum(this.dist)
-        }else{
+        if (include.probAC) this.dist[c(1:3, 65:70)] <- 0
+        if (max(this.dist) < 0.4) {
+            this.undeter <- ifelse(sum(this.dist) == 0, 1, sum(this.dist))
+            undeter <- undeter + this.undeter
+        } else {
             cutoff.3 <- this.dist[order(this.dist, decreasing = TRUE)[3]]
             cutoff.2 <- this.dist[order(this.dist, decreasing = TRUE)[2]]
             cutoff.1 <- this.dist[order(this.dist, decreasing = TRUE)[1]]
@@ -79,19 +79,19 @@ CSMF.interVA5 <- function(va){
 
             undeter <- undeter + sum(this.dist[which(this.dist < cutoff)])
             this.dist[which(this.dist < cutoff)] <- 0
-            if(!is.null(va[[i]][15])) dist <- dist + this.dist
+            if (!is.null(va[[i]][15])) dist <- dist + this.dist
         }
     }
     ## Normalize the probability for CODs
-    if(undeter > 0){
+    if (undeter > 0) {
         dist.cod <- c(dist[causeindex], undeter)
-        dist.cod <- dist.cod/sum(dist.cod)
-        names(dist.cod)<-c(causenames, "Undetermined")
-    }else{
+        dist.cod <- dist.cod / sum(dist.cod)
+        names(dist.cod) <- c(causenames, "Undetermined")
+    } else {
         dist.cod <- dist[causeindex]/sum(dist[causeindex])
-        names(dist.cod)<-causenames
+        names(dist.cod) <- causenames
     }
-    if(sum(is.nan(dist.cod)) == length(dist.cod)){
+    if (sum(is.nan(dist.cod)) == length(dist.cod)) {
         dist.cod[is.nan(dist.cod)] <- 0
     }
     return(dist.cod)
@@ -232,22 +232,22 @@ COMCAT.interVA5 <- function(va){
 CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALSE, type="bar",  top.plot = 10, min.prob = 0, ... ) {
 
     ## Check if there is a valid va object
-    if(class(va) == "interVA5"){
+    if (class(va) == "interVA5") {
         va <- va$VA5
     }
 
     # for future compatibility with non-standard input
-    for(i in 1:length(va)){
-        if(!is.null(va[[i]]$wholeprob)){
+    for (i in 1:length(va)) {
+        if (!is.null(va[[i]]$wholeprob)) {
             causenames <- names(va[[i]]$wholeprob)
             causeindex <- 1:length(causenames)
             break
         }
     }
 
-     include.probAC <- FALSE
+    include.probAC <- FALSE
     # fix for removing the first 3 preg related death in standard input
-    if(causenames[1] == "Not pregnant or recently delivered" &&
+    if (causenames[1] == "Not pregnant or recently delivered" &&
         causenames[2] == "Pregnancy ended within 6 weeks of death" &&
         causenames[3] == "Pregnant at death"&&
         causenames[65] == "Culture" &&
@@ -255,83 +255,86 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
         causenames[67] == "Health systems" &&
         causenames[68] == "Inevitable" &&
         causenames[69] == "Knowledge" &&
-        causenames[70] == "Resources"){
+        causenames[70] == "Resources") {
             causeindex <- causeindex[-c(1:3, 65:70)]
             causenames <- causenames[-c(1:3, 65:70)]
             include.probAC <- TRUE
     }
 
-
-    if(length(va) < 1){
-		cat("No va object found")
-		return()
-	}
+    if (length(va) < 1) {
+        cat("No va object found")
+        return()
+    }
     ## Initialize the population distribution
     dist <- NULL
-    for(i in 1:length(va)){
-        if(!is.null(va[[i]][15])){
-	        dist <- rep(0, length(unlist(va[[i]][15])))
-	        break
+    for (i in 1:length(va)) {
+        if (!is.null(va[[i]][15])) {
+            dist <- rep(0, length(unlist(va[[i]][15])))
+            break
         }
     }
     ## determine how many causes from top need to be summarized
-    if(is.null(top.aggregate)) top.aggregate <- length(causeindex)
+    if (is.null(top.aggregate)) top.aggregate <- length(causeindex)
     undeter <- 0
 
-    if(is.null(dist)){cat("No va probability found in input"); return()}
+    if (is.null(dist)) {cat("No va probability found in input"); return()}
     ## Add the probabilities together
-	if(!InterVA.rule){
-        for(i in 1:length(va)){
-            if(is.null(va[[i]][15])) {undeter = undeter + 1; next}
+    if (!InterVA.rule) {
+        for (i in 1:length(va)) {
+            if (is.null(va[[i]][15])) {
+                undeter <- undeter + 1
+                next
+            }
             this.dist <- unlist(va[[i]][15])
-            if(include.probAC) this.dist[c(1:3, 65:70)] <- 0
+            if (include.probAC) this.dist[c(1:3, 65:70)] <- 0
+            if (sum(this.dist) == 0) {
+                undeter <- undeter + 1
+                next
+            }
             cutoff <- this.dist[order(this.dist, decreasing = TRUE)[top.aggregate]]
             undeter <- undeter + sum(this.dist[which(this.dist < cutoff)])
-
             this.dist[which(this.dist < cutoff)] <- 0
-            if(!is.null(va[[i]][15])) dist <- dist + this.dist
+            if (!is.null(va[[i]][15])) dist <- dist + this.dist
         }
             ## Normalize the probability for CODs
-        if(undeter > 0){
+        if (undeter > 0) {
             dist.cod <- c(dist[causeindex], undeter)
-            dist.cod <- dist.cod/sum(dist.cod)
-            names(dist.cod)<-c(causenames, "Undetermined")
-        }else{
-            dist.cod <- dist[causeindex]/sum(dist[causeindex])
-            names(dist.cod)<-causenames
+            dist.cod <- dist.cod / sum(dist.cod)
+            names(dist.cod) <- c(causenames, "Undetermined")
+        } else {
+            dist.cod <- dist[causeindex] / sum(dist[causeindex])
+            names(dist.cod) <- causenames
         }
-    }else{
+    } else {
         dist.cod <- CSMF.interVA5(va)
     }
 
-
     ## Check if there is CODs above the minimum cut-off for prob
-    if(max(dist.cod) < min.prob){
+    if (max(dist.cod) < min.prob) {
         cat("No COD larger than the minimum probability cut off line")
         return()
     }
-    if(noplot){
-    		return(dist.cod)
+    if (noplot) {
+        return(dist.cod)
     }
 
-    if(!is.null(top.plot)){
-        if(top.plot < length(dist.cod)){
+    if (!is.null(top.plot)) {
+        if (top.plot < length(dist.cod)) {
             thre <- sort(dist.cod, decreasing=TRUE)[top.plot]
             min.prob <- max(min.prob, thre)
         }
     }
 
     ## Make pie plot upon request
-    if( type == "pie" ){
+    if (type == "pie") {
         dist.cod.sort <- sort(dist.cod, decreasing=TRUE)
         pie.color <- grey.colors(length(dist.cod.sort[dist.cod.sort >= min.prob]))
         pie.color.left <- rep(pie.color[length(pie.color)], length(dist.cod.sort[dist.cod.sort < min.prob]))
         pie.color <- c(pie.color, pie.color.left)
         pie(dist.cod.sort, col = pie.color,labels = names(dist.cod.sort)[dist.cod.sort > min.prob], ...)
-
     }
     ## Make bar plot upon request
-    if( type == "bar"){
+    if (type == "bar") {
         dist.cod.min <- dist.cod[dist.cod >= min.prob ]
         dist.cod.min <- sort(dist.cod.min, decreasing = FALSE)
         par(las = 2)
@@ -342,7 +345,6 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
     }
     ## Save the population distribution
     dist.cod
-
 }
 
 #' Plot an individual-level distribution of va probabilities.

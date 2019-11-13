@@ -7,7 +7,7 @@
 DataCheck5(Input, id, probbaseV5, InSilico_check = FALSE, write)
 }
 \arguments{
-\item{Input}{original data vector for one observation coded by 0 (absense), 1 (presence), and NA (missing).}
+\item{Input}{original data vector for one observation coded by 0 (absence), 1 (presence), and NA (missing).}
 
 \item{id}{id for this observation}
 
@@ -18,8 +18,8 @@ DataCheck5(Input, id, probbaseV5, InSilico_check = FALSE, write)
 \item{write}{logical indicator of writing to file}
 }
 \value{
-\item{Output }{ new data vector} \item{firstPass
-}{ message for the first pass check} \item{secondPass }{ message for the second pass check}
+\item{Output}{ new data vector} \item{firstPass
+}{ message for the first pass check} \item{secondPass}{ message for the second pass check}
 }
 \description{
 This function implements the data cleaning steps in the InterVA5 software.
@@ -46,6 +46,6 @@ http://www.interva.net/
 \code{\link{InterVA5.plot}}
 }
 \author{
-Jason Thomas Zehang Li, Tyler McCormick, Sam Clark
+Jason Thomas, Zehang Li, Tyler McCormick, Sam Clark
 }
 \keyword{InterVA}
