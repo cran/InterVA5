@@ -4,8 +4,7 @@
 \alias{whyNotCOD}
 \title{Get the symptoms with the largest conditional probability (symptom | cause) using VA data.}
 \usage{
-whyNotCOD(data, IDs = NULL, cause = NULL, pretty = TRUE,
-  includeAll = FALSE)
+whyNotCOD(data, IDs = NULL, cause = NULL, pretty = TRUE, includeAll = FALSE)
 }
 \arguments{
 \item{data}{The input data that InterVA5 used to assign the causes of death.}

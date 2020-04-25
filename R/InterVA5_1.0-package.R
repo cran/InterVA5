@@ -119,6 +119,29 @@ NULL
 
 
 
+#' Version 18 of the conditional probability of InterVA5
+#'
+#' This is version 18 (April 3, 2020) of the table of conditional probabilities of symptoms given CODs, along with
+#' prior probabilities in the first row. The
+#' values are from InterVA-5
+#'
+#'
+#' @name probbaseV5_18
+#' @docType data
+#' @format A data frame with 354 observations on 87 variables. The first row contains
+#' observations corresponding to prior probabilities; while the subsequent observations
+#' (rows 2 - 354) are the conditional probabilities.
+#' @keywords datasets
+#' @examples
+#' 
+#' data(probbaseV5_18)
+#'
+NULL
+
+
+
+
+
 #' 200 records of Sample Input
 #'
 #' This is a dataset consisting of 200 arbitrary sample input deaths in the

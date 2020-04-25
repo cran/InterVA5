@@ -1,5 +1,11 @@
 # InterVA5 - changes
 
+Version 1.1.0 (2020-04-24) 
+==========================
+* Updating symptom-cause-information matrix (probbaseV5) to match the InterVA5_1
+  release (April 3, 2020) on interva.net.
+
+
 Version 1.0.4 (2019-08-08) 
 ==========================
 * Add function to download the symptom-cause-information (SCI) matrix, probbaseV5, from:

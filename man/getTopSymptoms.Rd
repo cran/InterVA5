@@ -4,8 +4,7 @@
 \alias{getTopSymptoms}
 \title{Get the symptoms with the largest conditional probability (symptom | cause) for causes assigned by InterVA-5.}
 \usage{
-getTopSymptoms(object, data, IDs = NULL, pretty = TRUE,
-  includeAll = FALSE)
+getTopSymptoms(object, data, IDs = NULL, pretty = TRUE, includeAll = FALSE)
 }
 \arguments{
 \item{object}{An interVA5 object (i.e., the results returned from the InterVA5() function).}

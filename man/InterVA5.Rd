@@ -4,9 +4,20 @@
 \alias{InterVA5}
 \title{Provide InterVA5 analysis on the data input.}
 \usage{
-InterVA5(Input, HIV, Malaria, write = TRUE, directory = NULL,
-  filename = "VA5_result", output = "classic", append = FALSE,
-  groupcode = FALSE, sci = NULL, returnCheckedData = FALSE, ...)
+InterVA5(
+  Input,
+  HIV,
+  Malaria,
+  write = TRUE,
+  directory = NULL,
+  filename = "VA5_result",
+  output = "classic",
+  append = FALSE,
+  groupcode = FALSE,
+  sci = NULL,
+  returnCheckedData = FALSE,
+  ...
+)
 }
 \arguments{
 \item{Input}{A matrix input, or data read from csv files in the same format

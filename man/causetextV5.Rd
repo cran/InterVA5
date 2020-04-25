@@ -4,9 +4,11 @@
 \name{causetextV5}
 \alias{causetextV5}
 \title{Translation list of COD codes}
-\format{A data frame with the translation of codes to their names for 3
+\format{
+A data frame with the translation of codes to their names for 3
 pregnancy statuses, 61 CODs (both the version of COD only and COD with group code),
-and 6 circumstances of mortality (COMCAT).}
+and 6 circumstances of mortality (COMCAT).
+}
 \description{
 This is the translation of COD abbreviation codes into their corresponding
 full names.

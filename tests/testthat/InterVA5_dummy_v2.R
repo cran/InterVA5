@@ -86,9 +86,12 @@ dummydata["b_0907",c("i170o", "i174o", "i175o")] <- "y"
 # Prevent confusion with digestive neoplasms
 dummydata["b_0299", c("i421o", "i414a", "i354o")] <- "y"
 
-# Tetanus is just like this
-dummydata["b_0108", c("i022g", "i022j", "i310o")] <- "."
-dummydata["b_0108", c( "i022f", "i287o")] <- "y"
+# Tetnaus
+## dummydata["b_0108", c("i022g", "i022j", "i310o")] <- "."
+## dummydata["b_0108", c( "i022f", "i287o")] <- "y"
+dummydata["b_0108", c("i022g", "i022j", "i149o", "i209a", "i310o")] <- "."
+dummydata["b_0108", c( "i022f")] <- "y"
+
 
 # culture death can't be elderly even though probbase suggests otherwise
 dummydata["c_cult","i022a"] <- "."
@@ -99,7 +102,7 @@ dummydata["c_cult","i022c"] <- "y"
 dummydata["b_1299", "i022l"] <- "."
 
 # unspec neonatal
-dummydata["b_1099", c("i123o","i363o","i369o")] <- "."
+dummydata["b_1099", c("i022h", "i363o","i369o")] <- "."
 
 # maternal
 dummydata["b_0999", c("i120b","i022l")] <- "."

@@ -14,7 +14,7 @@ for (cod in rownames(dummydata)[grep("^a_", rownames(dummydata))]){
   })
 }
 
-# B group
+# B group cod = "b_1099"
 for (cod in rownames(dummydata)[grep("^b_", rownames(dummydata))]){
   test_that(paste0(cod, " (", dummydata[cod, "ID"], ")"), {
 

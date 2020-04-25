@@ -339,9 +339,21 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
         dist.cod.min <- sort(dist.cod.min, decreasing = FALSE)
         par(las = 2)
         par(mar = c(5,15,4,2))
-        bar.color <- grey.colors(length(dist.cod.min))
-        bar.color <- rev(bar.color)
-        barplot(dist.cod.min , horiz = TRUE,names.arg = names(dist.cod.min), col = bar.color, cex.names=0.8, xlab = "Probability", ...)
+        if (requireNamespace("ggplot2", quietly = TRUE)) {
+            barplot.df <- data.frame(Probability = dist.cod.min, Causes = names(dist.cod.min))
+            g <- ggplot2::ggplot(barplot.df,
+                   ggplot2::aes(x = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))),
+                                y = barplot.df$Probability,
+                                fill = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))))) +
+                   ggplot2::geom_bar(stat="identity") + ggplot2::xlab("")
+            g + ggplot2::coord_flip() +
+                ggplot2::scale_fill_grey(start = 0.8, end = 0.2) +
+                ggplot2::theme(legend.position = "none")
+        } else {
+            bar.color <- grey.colors(length(dist.cod.min))
+            bar.color <- rev(bar.color)
+            barplot(dist.cod.min, horiz = TRUE, names.arg = names(dist.cod.min), col = bar.color, cex.names=0.8, xlab = "Probability", ...)
+        }
     }
     ## Save the population distribution
     dist.cod
@@ -434,9 +446,20 @@ InterVA5.plot <- function(va, type="bar", min.prob = 0.01, ... ){
         dist.cod.min <- sort(dist.cod.min, decreasing = FALSE)
         par(las = 2)
         par(mar = c(5,15,4,2))
-        bar.color <- grey.colors(length(dist.cod.min))
-        bar.color <- rev(bar.color)
-        barplot(dist.cod.min , horiz = TRUE,names.arg = names(dist.cod.min), col = bar.color, cex.names=0.8, xlab = "Probability", ...)
+        if (requireNamespace("ggplot2", quietly = TRUE)) {
+            barplot.df <- data.frame(Probability = dist.cod.min, Causes = names(dist.cod.min))
+            g <- ggplot2::ggplot(barplot.df,
+                   ggplot2::aes(x = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))),
+                                y = barplot.df$Probability,
+                                fill = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))))) +
+                   ggplot2::geom_bar(stat="identity") + ggplot2::xlab("")
+            g + ggplot2::coord_flip() +
+                ggplot2::scale_fill_grey(start = 0.8, end = 0.2) +
+                ggplot2::theme(legend.position = "none")
+        } else {
+            bar.color <- grey.colors(length(dist.cod.min))
+            bar.color <- rev(bar.color)
+            barplot(dist.cod.min, horiz = TRUE, names.arg = names(dist.cod.min), col = bar.color, cex.names=0.8, xlab = "Probability", ...)
+        }
     }
-
 }

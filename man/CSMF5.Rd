@@ -4,8 +4,16 @@
 \alias{CSMF5}
 \title{Summarize and plot a population level distribution of va probabilities.}
 \usage{
-CSMF5(va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALSE,
-  type = "bar", top.plot = 10, min.prob = 0, ...)
+CSMF5(
+  va,
+  top.aggregate = NULL,
+  InterVA.rule = FALSE,
+  noplot = FALSE,
+  type = "bar",
+  top.plot = 10,
+  min.prob = 0,
+  ...
+)
 }
 \arguments{
 \item{va}{The list of va object to summarize.}

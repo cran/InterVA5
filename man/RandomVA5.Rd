@@ -4,7 +4,9 @@
 \name{RandomVA5}
 \alias{RandomVA5}
 \title{200 records of Sample Input}
-\format{200 arbitrary input records.}
+\format{
+200 arbitrary input records.
+}
 \description{
 This is a dataset consisting of 200 arbitrary sample input deaths in the
 acceptable format of InterVA5. Any dataset that needs to be analyzed by this
