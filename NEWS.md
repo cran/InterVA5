@@ -1,5 +1,11 @@
 # InterVA5 - changes
 
+Version 1.1.2 (2020-11-13) 
+==========================
+
+* The InterVA website has been taken down, so `download.SCI()` has been removed.
+
+
 Version 1.1.0 (2020-04-24) 
 ==========================
 * Updating symptom-cause-information matrix (probbaseV5) to match the InterVA5_1

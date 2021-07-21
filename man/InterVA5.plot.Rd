@@ -4,13 +4,21 @@
 \alias{InterVA5.plot}
 \title{Plot an individual-level distribution of va probabilities.}
 \usage{
-InterVA5.plot(va, type = "bar", min.prob = 0.01, ...)
+InterVA5.plot(
+  va,
+  type = "bar",
+  title = "Top CSMF Distribution",
+  min.prob = 0.01,
+  ...
+)
 }
 \arguments{
 \item{va}{A va object}
 
 \item{type}{An indicator of the type of chart to plot.  "pie" for pie chart;
 "bar" for bar chart.}
+
+\item{title}{A character string for the title of the CSMF plot.}
 
 \item{min.prob}{The minimum probability that is to be plotted in bar chart,
 or to be labeled in pie chart.}

@@ -147,8 +147,7 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
     causetextV5 <- get("causetextV5", envir = environment())
     if (groupcode) {
         causetextV5 <- causetextV5[, -2]
-    }
-    else {
+    } else {
         causetextV5 <- causetextV5[, -3]
     }
     if (write) {
@@ -295,7 +294,7 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
         tmp <- DataCheck5(input.current, id=index.current, probbaseV5=probbaseV5, write=write)
         if (returnCheckedData) {
             checkedData <- rbind(checkedData,
-                                 c(idInputs[i], tmp[2:S]))
+                                 c(idInputs[i], tmp$Output[2:S]))
         }
         input.current <- tmp$Output
         firstPass <- rbind(firstPass, tmp$firstPass)
@@ -414,7 +413,11 @@ InterVA5 <- function (Input, HIV, Malaria, write = TRUE, directory = NULL, filen
     }
 
     setwd(globle.dir)
-    if (!returnCheckedData) checkedData <- "returnCheckedData = FALSE"
+    if (!returnCheckedData) {
+        checkedData <- "returnCheckedData = FALSE"
+    } else {
+        colnames(checkedData) <- colnames(Input)
+    }
     out <- list(ID = ID.list[which(!is.na(ID.list))], VA5 = VAresult[which(!is.na(ID.list))], 
                 Malaria = Malaria, HIV = HIV, checkedData = checkedData)
     class(out) <- "interVA5"

@@ -31,7 +31,7 @@ NULL
 #'
 #' To get the most up-to-date version of the package, as well as the past
 #' versions, please check the github repository at:
-#' \url{https://github.com/jarathomas/InterVA5-R-Replicate/}
+#' \url{https://github.com/verbal-autopsy-software/InterVA5}
 #'
 #' \tabular{ll}{ Package: \tab InterVA5\cr Type: \tab Package\cr Version: \tab
 #' 1.0\cr Date: \tab 2018-02-01\cr License: \tab GPL-3\cr }
@@ -41,7 +41,7 @@ NULL
 #' @author Jason Thomas, Zehang Li, Tyler McCormick, Sam Clark
 #'
 #' Maintainer: Jason Thomas <jarathomas@@gmail.com>
-#' @references http://www.interva.net/
+#' @references http://www.byass.uk/interva/
 #' @keywords InterVA
 #'
 NULL
@@ -135,6 +135,32 @@ NULL
 #' @examples
 #' 
 #' data(probbaseV5_18)
+#'
+NULL
+
+
+
+
+
+#' Version 19 of the conditional probability of InterVA5
+#'
+#' This is version 19 (July 20, 2021) of the table of conditional probabilities of symptoms given CODs, along with
+#' prior probabilities in the first row. The
+#' values differ from the last version (v18) of InterVA-5 (interva.net) by setting
+#' Pr(abortion-related death | i309 = 1) = "N"
+#' Pr(abortion-related death | i310 = 1) = "N"
+#' (the previous values were "E").
+#'
+#'
+#' @name probbaseV5_19
+#' @docType data
+#' @format A data frame with 354 observations on 87 variables. The first row contains
+#' observations corresponding to prior probabilities; while the subsequent observations
+#' (rows 2 - 354) are the conditional probabilities.
+#' @keywords datasets
+#' @examples
+#' 
+#' data(probbaseV5_19)
 #'
 NULL
 

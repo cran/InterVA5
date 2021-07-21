@@ -9,8 +9,10 @@ CSMF5(
   top.aggregate = NULL,
   InterVA.rule = FALSE,
   noplot = FALSE,
+  title = "Top CSMF Distribution",
   type = "bar",
   top.plot = 10,
+  return.barplot = FALSE,
   min.prob = 0,
   ...
 )
@@ -30,10 +32,15 @@ goes into an extra category "Undetermined". Default set to "FALSE".}
 \item{noplot}{A logical value indicating whether the plot will be shown. If
 it is set to "TRUE", only the CSMF will be returned.}
 
+\item{title}{A character string for the title of the CSMF plot.}
+
 \item{type}{An indicator of the type of chart to plot.  "pie" for pie chart;
 "bar" for bar chart.}
 
 \item{top.plot}{the maximum number of causes to plot in bar plot}
+
+\item{return.barplot}{A logical indicating if the (barplot) ggplot() object
+should be returned (instead of printed).  Default value is FALSE.}
 
 \item{min.prob}{The minimum probability that is to be plotted in bar chart,
 or to be labeled in pie chart.}
@@ -70,15 +77,15 @@ CSMF.summary <- CSMF5(sample.output, InterVA.rule = TRUE,
 
 ## Population level summary using pie chart
 CSMF.summary2 <- CSMF5(sample.output, type = "pie",
- min.prob = 0.01, main = "population COD distribution using pie chart",
+ min.prob = 0.01, title = "population COD distribution using pie chart",
  clockwise = FALSE, radius = 0.7, cex = 0.7, cex.main = 0.8)
 
 ## Population level summary using bar chart
 CSMF.summary3 <- CSMF5(sample.output, type = "bar",
-  min.prob = 0.01, main = "population COD distribution using bar chart",
+  min.prob = 0.01, title = "population COD distribution using bar chart",
   cex.main = 1)
 CSMF.summary4 <- CSMF5(sample.output, type = "bar",
-  top.plot = 5, main = "Top 5 population COD distribution",
+  top.plot = 5, title = "Top 5 population COD distribution",
   cex.main = 1)
 }
 

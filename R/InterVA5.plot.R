@@ -182,11 +182,14 @@ COMCAT.interVA5 <- function(va){
 #' goes into an extra category "Undetermined". Default set to "FALSE".
 #' @param noplot A logical value indicating whether the plot will be shown. If
 #' it is set to "TRUE", only the CSMF will be returned.
+#' @param title A character string for the title of the CSMF plot.  
 #' @param top.plot the maximum number of causes to plot in bar plot
 #' @param min.prob The minimum probability that is to be plotted in bar chart,
 #' or to be labeled in pie chart.
 #' @param type An indicator of the type of chart to plot.  "pie" for pie chart;
 #' "bar" for bar chart.
+#' @param return.barplot A logical indicating if the (barplot) ggplot() object
+#' should be returned (instead of printed).  Default value is FALSE.
 #' @param ... Arguments to be passed to/from graphic function
 #' \code{\link[graphics]{barplot}}, \code{\link[graphics]{pie}}, and more
 #' graphical paramters (see \code{\link[graphics]{par}}). They will affect the
@@ -216,20 +219,22 @@ COMCAT.interVA5 <- function(va){
 #'
 #' ## Population level summary using pie chart
 #' CSMF.summary2 <- CSMF5(sample.output, type = "pie",
-#'  min.prob = 0.01, main = "population COD distribution using pie chart",
+#'  min.prob = 0.01, title = "population COD distribution using pie chart",
 #'  clockwise = FALSE, radius = 0.7, cex = 0.7, cex.main = 0.8)
 #'
 #' ## Population level summary using bar chart
 #' CSMF.summary3 <- CSMF5(sample.output, type = "bar",
-#'   min.prob = 0.01, main = "population COD distribution using bar chart",
+#'   min.prob = 0.01, title = "population COD distribution using bar chart",
 #'   cex.main = 1)
 ## Population level summary specified by number of top causes
 #' CSMF.summary4 <- CSMF5(sample.output, type = "bar",
-#'   top.plot = 5, main = "Top 5 population COD distribution",
+#'   top.plot = 5, title = "Top 5 population COD distribution",
 #'   cex.main = 1)
 #' }
 #'
-CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALSE, type="bar",  top.plot = 10, min.prob = 0, ... ) {
+CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALSE,
+                   title = "Top CSMF Distribution", type = "bar",  top.plot = 10,
+                   return.barplot = FALSE, min.prob = 0, ... ) {
 
     ## Check if there is a valid va object
     if (class(va) == "interVA5") {
@@ -331,28 +336,45 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
         pie.color <- grey.colors(length(dist.cod.sort[dist.cod.sort >= min.prob]))
         pie.color.left <- rep(pie.color[length(pie.color)], length(dist.cod.sort[dist.cod.sort < min.prob]))
         pie.color <- c(pie.color, pie.color.left)
-        pie(dist.cod.sort, col = pie.color,labels = names(dist.cod.sort)[dist.cod.sort > min.prob], ...)
+        pie(dist.cod.sort, main = title,
+            col = pie.color, labels = names(dist.cod.sort)[dist.cod.sort > min.prob],
+            ...)
     }
     ## Make bar plot upon request
     if (type == "bar") {
-        dist.cod.min <- dist.cod[dist.cod >= min.prob ]
+        ## dist.cod.min <- dist.cod[dist.cod >= min.prob ]
+        dist.cod.min <- dist.cod[dist.cod > min.prob ]
         dist.cod.min <- sort(dist.cod.min, decreasing = FALSE)
-        par(las = 2)
-        par(mar = c(5,15,4,2))
         if (requireNamespace("ggplot2", quietly = TRUE)) {
-            barplot.df <- data.frame(Probability = dist.cod.min, Causes = names(dist.cod.min))
+            barplot.df <- data.frame(Probability = dist.cod.min,
+                                     Causes = names(dist.cod.min))
             g <- ggplot2::ggplot(barplot.df,
-                   ggplot2::aes(x = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))),
-                                y = barplot.df$Probability,
-                                fill = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))))) +
-                   ggplot2::geom_bar(stat="identity") + ggplot2::xlab("")
-            g + ggplot2::coord_flip() +
+                                 ggplot2::aes(x = stats::reorder(Causes,
+                                                                 seq(1:length(Causes))),
+                                              y = Probability,
+                                              fill = stats::reorder(Causes,
+                                                                    seq(1:length(Causes))))) +
+                ggplot2::geom_bar(stat="identity") +
+                ggplot2::xlab("") +
+                ggplot2::ylab("") +
+                ggplot2::coord_flip() +
                 ggplot2::scale_fill_grey(start = 0.8, end = 0.2) +
+                ggplot2::ggtitle(title) +
                 ggplot2::theme(legend.position = "none")
+            if (return.barplot) {
+                return(g)
+            } else {
+                par(las = 2)
+                par(mar = c(5,15,4,2))
+                print(g)
+            }
+
         } else {
             bar.color <- grey.colors(length(dist.cod.min))
             bar.color <- rev(bar.color)
-            barplot(dist.cod.min, horiz = TRUE, names.arg = names(dist.cod.min), col = bar.color, cex.names=0.8, xlab = "Probability", ...)
+            barplot(dist.cod.min, horiz = TRUE, names.arg = names(dist.cod.min),
+                    main = title, col = bar.color, cex.names=0.8,
+                    xlab = "Probability", ...)
         }
     }
     ## Save the population distribution
@@ -370,13 +392,14 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
 #' or to be labeled in pie chart.
 #' @param type An indicator of the type of chart to plot.  "pie" for pie chart;
 #' "bar" for bar chart.
+#' @param title A character string for the title of the CSMF plot.  
 #' @param ... Arguments to be passed to/from graphic function
 #' \code{\link[graphics]{barplot}}, \code{\link[graphics]{pie}}, and more
 #' graphical paramters (see \code{\link[graphics]{par}}). They will affect the
 #' main title, size and font of labels, and the radius of the pie chart.
 #' @seealso \code{\link{CSMF5}}
-#' @keywords InterVA
 #' @export InterVA5.plot
+#' @keywords InterVA
 #' @examples
 #'
 #' \dontrun{
@@ -397,13 +420,13 @@ CSMF5 <- function (va, top.aggregate = NULL, InterVA.rule = FALSE, noplot = FALS
 #'     main = "2nd sample VA analysis using bar chart", cex.main = 0.8)
 #' }
 #'
-InterVA5.plot <- function(va, type="bar", min.prob = 0.01, ... ){
+InterVA5.plot <- function(va, type = "bar", title = "Top CSMF Distribution", min.prob = 0.01, ... ){
 
     # for future compatibility with non-standard input
-    if(!is.null(va$wholeprob)){
+    if (!is.null(va$wholeprob)) {
         causenames <- names(va$wholeprob)
         causeindex <- 1:length(causenames)
-    }else{
+    } else {
         cat("Cause of death undetermined for this case\n")
         return()
     }
@@ -418,48 +441,55 @@ InterVA5.plot <- function(va, type="bar", min.prob = 0.01, ... ){
 
 
     ## Check if there is a valid va object
-	if(length(va) < 1){
-		cat("No va object found")
-		return()
-	}
+    if (length(va) < 1) {
+        cat("No va object found")
+        return()
+    }
     ## Find the probability distribution
-	dist <- unlist(va[15])
+    dist <- unlist(va[15])
     dist.cod <- dist[causeindex]/sum(dist[causeindex])
     ## Check if there is CODs above the minimum cut-off for prob
-    if(max(dist.cod) < min.prob){
+    if (max(dist.cod) < min.prob) {
         cat("No COD larger than the minimum probability cut off line")
         return()
     }
-    names(dist.cod)<-causenames
+    names(dist.cod) <- causenames
     ## Make pie plot upon request
-    if( type == "pie" ){
+    if (type == "pie") {
         dist.cod.sort <- sort(dist.cod, decreasing=TRUE)
         pie.color <- grey.colors(length(dist.cod.sort[dist.cod.sort >= min.prob]))
         pie.color.left <- rep(pie.color[length(pie.color)], length(dist.cod.sort[dist.cod.sort < min.prob]))
         pie.color <- c(pie.color, pie.color.left)
-        pie(dist.cod.sort, col = pie.color,labels = names(dist.cod.sort)[dist.cod.sort > min.prob], ...)
-
+        pie(dist.cod.sort, main = title, col = pie.color,labels = names(dist.cod.sort)[dist.cod.sort > min.prob], ...)
     }
     ## Make bar plot upon request
-    if( type == "bar"){
-        dist.cod.min <- dist.cod[dist.cod >= min.prob ]
+    if (type == "bar") {
+        dist.cod.min <- dist.cod[dist.cod >= min.prob]
         dist.cod.min <- sort(dist.cod.min, decreasing = FALSE)
         par(las = 2)
         par(mar = c(5,15,4,2))
         if (requireNamespace("ggplot2", quietly = TRUE)) {
-            barplot.df <- data.frame(Probability = dist.cod.min, Causes = names(dist.cod.min))
+            barplot.df <- data.frame(Probability = dist.cod.min,
+                                     Causes = names(dist.cod.min))
             g <- ggplot2::ggplot(barplot.df,
-                   ggplot2::aes(x = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))),
-                                y = barplot.df$Probability,
-                                fill = stats::reorder(barplot.df$Causes, seq(1:length(barplot.df$Causes))))) +
-                   ggplot2::geom_bar(stat="identity") + ggplot2::xlab("")
-            g + ggplot2::coord_flip() +
+                                 ggplot2::aes(x = stats::reorder(Causes,
+                                                                 seq(1:length(Causes))),
+                                              y = Probability,
+                                              fill = stats::reorder(Causes,
+                                                                    seq(1:length(Causes))))) +
+                ggplot2::geom_bar(stat="identity") +
+                ggplot2::xlab("") + ggplot2::ylab("") +
+                ggplot2::coord_flip() +
                 ggplot2::scale_fill_grey(start = 0.8, end = 0.2) +
+                ggplot2::ggtitle(title) +
                 ggplot2::theme(legend.position = "none")
+            print(g)
         } else {
             bar.color <- grey.colors(length(dist.cod.min))
             bar.color <- rev(bar.color)
-            barplot(dist.cod.min, horiz = TRUE, names.arg = names(dist.cod.min), col = bar.color, cex.names=0.8, xlab = "Probability", ...)
+            barplot(dist.cod.min, horiz = TRUE, names.arg = names(dist.cod.min),
+                    main = title, col = bar.color, cex.names=0.8,
+                    xlab = "Probability", ...)
         }
     }
 }
